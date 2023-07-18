@@ -16,31 +16,36 @@ def checkin(email=os.environ.get('EMAIL'), password=os.environ.get('PASSWORD'),
     session.get(base_url, verify=False)
     login_url = base_url + '/auth/login'
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) '
-                      'AppleWebKit/537.36 (KHTML, like Gecko) '
-                      'Chrome/56.0.2924.87 Safari/537.36',
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                'authority': 'kp.m-team.cc',
+                'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+                'accept-language': 'zh-CN,zh;q=0.9',
+                'cache-control': 'max-age=0',
+                'content-type': 'application/x-www-form-urlencoded',
+                'origin': 'https://kp.m-team.cc',
+                'referer': 'https://kp.m-team.cc/login.php',
+                'sec-ch-ua': '"Google Chrome";v="107", "Chromium";v="107", "Not=A?Brand";v="24"',
+                'sec-ch-ua-mobile': '?0',
+                'sec-ch-ua-platform': '"Windows"',
+                'sec-fetch-dest': 'document',
+                'sec-fetch-mode': 'navigate',
+                'sec-fetch-site': 'same-origin',
+                'sec-fetch-user': '?1',
+                'upgrade-insecure-requests': '1',
+                'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36'
     }
-    post_data = 'email=' + email + '&passwd=' + password + '&code='
-    post_data = post_data.encode()
-    response = session.post(login_url, post_data, headers=headers, verify=False)
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) '
-                      'AppleWebKit/537.36 (KHTML, like Gecko) '
-                      'Chrome/56.0.2924.87 Safari/537.36',
-        'Referer': base_url + '/user'
+                        
+    #post_data = 'email=' + email + '&passwd=' + password + '&code='
+    #post_data = post_data.encode()
+    data = {
+                'username': email,
+                'password': password
     }
-    response = session.post(base_url + '/user/checkin', headers=headers,
-                            verify=False)
+
+    response = session.post(login_url, data, headers=headers, verify=False)
     response = json.loads(response.text)
-    print(response['msg'])
-    return response['msg']
+    print(response)
+
 
 
 result = checkin()
-if SCKEY != '':
-    sendurl = 'https://sctapi.ftqq.com/' + SCKEY + '.send?title=机场签到&desp=' + result
-    r = requests.get(url=sendurl)
-if TG_USER_ID != '':
-    sendurl = f'https://api.telegram.org/bot{TG_BOT_TOKEN}/sendMessage?chat_id={TG_USER_ID}&text={result}&disable_web_page_preview=True'
-    r = requests.get(url=sendurl)
+
